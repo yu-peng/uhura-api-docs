@@ -1,0 +1,79 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Uhura Web API
+
+Uhura provides a REST API for applications to access our scheduling and relaxation 
+services. This page documents the first version of the API.
+
+Current version of the Uhura API is running on:
+
+* https://uhura.csail.mit.edu/
+
+## Allowed HTTP requests
+
+* GET - Retrieves a resource or list of resources
+* POST - Creates or updates a resource
+
+# Group Vehicle Routing Problems
+
+## Create and Solve [/uhura-web-interface/planner/updateProblem]
+
+Create a new problem based on the json payload and find the best solution for it.
+
+### POST
+
++ Request (application/json)
+    + Attributes
+
++ Response 200 (application/json)
+
+    + Attributes
+        + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
+         
+## Next Solution [/uhura-web-interface/planner/replan{?email}]
+
+Find the next best solution given the current problem.
+
++ Parameters
+    + email: `yupeng@mit.edu` (string, required) - the user's email used as a unique identifier for the problem created before.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes
+        + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
+        
+## Add Discrete Conflict and Replan [/uhura-web-interface/planner/addDecisionConflictAndReplan]
+
+Insert a new conflict of discrete variable assignments and find the next best solution given the current problem.
+
+### POST
+    
++ Request (application/json)
+    + Attributes
+
++ Response 200 (application/json)
+
+    + Attributes
+        + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
+
+## Add Temporal Conflict and Replan [/uhura-web-interface/planner/addTemporalConflictAndReplan{?email,constraintID,isLB,isUB,newLB,newUB}]
+
+Insert a new conflict of temporal constraints and find the next best solution given the current problem.
+
++ Parameters
+    + email: `yupeng@mit.edu` (string, required) - the user's email used as a unique identifier for the problem created before.
+    + constraintID: `34523-64gsd-vzx34-123sa` (string, required) - a unique identifier for the constraint object to be modified.
+    + isLB: `false` (boolean, optional) - sepcifies if the modification is made to the lower bound of the constraint.
+    + isUB: `false` (boolean, optional) - sepcifies if the modification is made to the upper bound of the constraint.
+    + newLB: `10` (number, optional) - sepcifies the new lower bound of the constraint.
+    + newUB: `100` (number, optional) - sepcifies the new upper bound of the constraint.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes
+        + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
