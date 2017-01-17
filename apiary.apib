@@ -25,7 +25,16 @@ Create a new problem based on the json payload and find the best solution for it
 
 + Request (application/json)
     + Attributes
-
+        + email: `yupeng@mit.edu` (string, required) - the user's email used as a unique identifier for the problem created.
+        + mode: DRIVING (enum, required) - the travel mode selected by the user for this trip.
+            + Members
+                + driving
+                + biking
+                + walking
+        + origin (Location, required) - the origin of this trip.
+        + origin (Location, required) - the destination of this trip.
+        + activities (array[Task], required) - the set of tasks to be achieved.
+                
 + Response 200 (application/json)
 
     + Attributes
@@ -55,6 +64,8 @@ Insert a new conflict of discrete variable assignments and find the next best so
     
 + Request (application/json)
     + Attributes
+        + email: `yupeng@mit.edu` (string, required) - the user's email used as a unique identifier for the problem created before.
+        + assignments (array[Decision], required) - contains an array of discrete variable assignments that should be avoided in future solutions.
 
 + Response 200 (application/json)
 
@@ -127,7 +138,7 @@ Insert a new conflict of temporal constraints and find the next best solution gi
 + index: 3 (number, required) - the sequence index for this activity.
 + name: `Drive to 745 Atlantic Ave` (string, required) - a textual instruction for this activity.
 + guards (array[Decision], required) - the set of guard assignments for this activity.
-+ duration: `92.8` (number, required) - indicates the duion ration of this activity, in minutes.
++ duration: `92.8` (number, required) - indicates the duration of this activity, in minutes.
 + relaxed: `true` (boolean, required) - sepcifies if the duration of the activity has been relaxed.
 + startLoc: `Sidney Pacific, 70 Pacific Street` (string, required) - the from location where the activity begins.
 + endLoc: `Stata Center32 Vassar Street` (string, required) - the location where the activity ends.
@@ -143,3 +154,32 @@ Insert a new conflict of temporal constraints and find the next best solution gi
 + name: `Sidney Pacific, 70 Pacific Street` (string, required) - the name of the point-of-interest.
 + lat: `42.35031` (number, required) - the latitude of the POI.
 + lon: `-71.0571` (number, required) - the longitude of the POI.
+
+### Location
++ name: `Mary Chung, 464 Massachusetts Ave` (string, required) - the name of the location.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location.
++ index: 3 (number, required) - the sequence index for this location.
++ latitude: `42.35031` (number, required) - the latitude of the location.
++ longitude: `-71.0571` (number, required) - the longitude of the location.
++ departure-time: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the time of departure, in HH:mm.
++ departure-date: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the date of departure, in MM/dd/yyyy.
++ arrival-time: `15:00` (string, required) - the time of arrival, in HH:mm.
++ relaxable: `false` (boolean, required) - sepcifies if the departure/arrival time for this location is relaxable.
++ preferred: `false` (boolean, required) - sepcifies if this is a preferred location.
+
+### Task
++ index: 3 (number, required) - the sequence index for this task.
++ type (enum, required) - the type of this task.
+    + Members
+        + Partial - the task is partially specified and candidates need to be retrieved by the planner according to constraints in the description.
+        + Complete - the task is fully specified by the candidates encoded in this object.
++ name: `Chinese Restaurant` (string, required) - the name of the task.
++ description (object, optional) - a JSON object that describes the domain of this task. Each key-value pair corresponds to a phrase in the WHERE clause of a SELECT MySQL query.
+    + type: `Restaurant` (string, optional) - the type of the task location.
+    + cuisine: `Chinese` (string, optional) - the cuisine of food provided at this location (for restaurant task only).
+    + genre: `Action` (string, optional) - genre for the movie (for movie task only).
++ order: 3 (number, required) - the sequential order for this task compared to the others.
++ time: `11:00` (string, required) - the time of start, in HH:mm.
++ duration: `92.8` (number, required) - indicates the required duration of this task, in minutes.
++ relaxable: `false` (boolean, required) - sepcifies if the duration for this task is relaxable.
++ candidates (array[Location], required) - the candidate locations to visit for this task.
