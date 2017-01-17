@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: https://uhura.csail.mit.edu/
 
 # Uhura Web API
 
@@ -30,7 +30,8 @@ Create a new problem based on the json payload and find the best solution for it
 
     + Attributes
         + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
-         
+        + solution (Solution, optional) - the solution object for the problem.
+
 ## Next Solution [/uhura-web-interface/planner/replan{?email}]
 
 Find the next best solution given the current problem.
@@ -44,7 +45,8 @@ Find the next best solution given the current problem.
 
     + Attributes
         + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
-        
+        + solution (Solution, optional) - the solution object for the problem.
+
 ## Add Discrete Conflict and Replan [/uhura-web-interface/planner/addDecisionConflictAndReplan]
 
 Insert a new conflict of discrete variable assignments and find the next best solution given the current problem.
@@ -58,6 +60,7 @@ Insert a new conflict of discrete variable assignments and find the next best so
 
     + Attributes
         + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
+        + solution (Solution, optional) - the solution object for the problem.
 
 ## Add Temporal Conflict and Replan [/uhura-web-interface/planner/addTemporalConflictAndReplan{?email,constraintID,isLB,isUB,newLB,newUB}]
 
@@ -77,3 +80,66 @@ Insert a new conflict of temporal constraints and find the next best solution gi
 
     + Attributes
         + error (string, optional) - if no solution is returned, this field contains detailed information about the reasons behind the error.
+        + solution (Solution, optional) - the solution object for the problem.
+        
+## Data Structures
+
+### Solution
++ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the solution object.
++ utility: `10` (number, required) - the utility of the solution object.
++ cost: `10` (number, required) - the cost amount in USD of the solution object.
++ decisions (array[Decision], required) - contains an array of discrete variable assignments.
++ ccRelaxations (array[CCRelaxation], required) - contains an array of chance constraint relaxations.
++ temporalRelaxations (array[TemporalRelaxation], required) - contains an array of temporal relaxations.
++ semanticRelaxations (array[DomainRelaxation], required) - contains an array of domain relaxations.
++ activities (array[Activity], required) - contains an array of activities in the solution.
++ pois (array[POI], required) - contains an array of point-of-interests visited by this solution.
++ departureConstraint: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the id for the constraint that encodes the departure time requirement.
++ absoluteDepartureTime: `10` (number, optional) - the departure time specified as Unix time, or milliseconds since midnight, January 1, 1970 UTC.
++ departureTime: `10` (string, optional) - a textual description for the departure time.
++ arrivalConstraint: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the id for the constraint that encodes the arrival time requirement.
++ absoluteArrivalTime: `10` (number, optional) - the arrival time specified as Unix time, or milliseconds since midnight, January 1, 1970 UTC.
++ arrivalTime: `10` (string, optional) - a textual description for the arrival time.
+
+### Decision
++ name: `Chinese Restaurant` (string, required) - the name of the decision variable.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the decision variable.
++ value: `Mary Chung` (string, required) - the domain value selected.
++ description: `a restaurant in Central Square` (string, required) - a textual description for the assignment made.
+
+### CCRelaxation
++ originalValue: `0.01` (number, required) - the original risk bound of the chance constraint.
++ relaxedValue: `0.05` (number, required) - the relaxed risk bound of the chance constraint.
++ description: `Relaxing the risk bound from 1% to 5%` (string, required) - a textual description for the chance-constrained relaxation.
+
+### TemporalRelaxation
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the relaxed constraint.
++ relaxedLB: `true` (boolean, required) - sepcifies if the relaxation modifies the lower bound of the constraint.
++ relaxedUB: `false` (boolean, required) - sepcifies if the relaxation modifies the lower bound of the constraint.
++ originalValue: `10` (number, required) - the original temporal bound of the constraint.
++ relaxedValue: `5` (number, required) - the relaxed temporal bound of the constraint.
++ description: `Shorten the duration from 10 minutes to 5 minutes` (string, required) - a textual description for the temporal relaxation.
+
+### DomainRelaxation
++ description: `Relax the cuisine requirement from Chinese to Korean` (string, required) - a textual description for the domain relaxation.
+
+### Activity
++ index: 3 (number, required) - the sequence index for this activity.
++ name: `Drive to 745 Atlantic Ave` (string, required) - a textual instruction for this activity.
++ guards (array[Decision], required) - the set of guard assignments for this activity.
++ duration: `92.8` (number, required) - indicates the duion ration of this activity, in minutes.
++ relaxed: `true` (boolean, required) - sepcifies if the duration of the activity has been relaxed.
++ startLoc: `Sidney Pacific, 70 Pacific Street` (string, required) - the from location where the activity begins.
++ endLoc: `Stata Center32 Vassar Street` (string, required) - the location where the activity ends.
++ isGoal: `false` (boolean, required) - indicates if the activity specifies the stay at one of the goals contained in the original problem (instead of a traversal between the goals).
++ goalIndex: `2` (number, optional) - the index number of the goal object this activity represents.
++ startLat: `42.35031` (number, required) - the latitude of the from location.
++ startLon: `-71.0571` (number, required) - the longitude of the from location.
++ endLat: `42.35031` (number, required) - the latitude of the to location.
++ endLon: `-71.0571` (number, required) - the longitude of the to location.
++ polyline: `42.35031,-71.0571,42.35031,-71.0571,42.35031,-71.0571` (string, optional) - contains a single points object that holds an encoded polyline representation of the activity.
+
+### POI
++ name: `Sidney Pacific, 70 Pacific Street` (string, required) - the name of the point-of-interest.
++ lat: `42.35031` (number, required) - the latitude of the POI.
++ lon: `-71.0571` (number, required) - the longitude of the POI.
